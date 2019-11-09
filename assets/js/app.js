@@ -24,7 +24,7 @@
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
   // Import Data
-  const stateData = await d3.csv("/D3_data_journalism/assets/data/data.csv");
+  const stateData = await d3.csv("assets/data/data.csv");
 
   // Parse Data/Cast as numbers
   stateData.forEach(function(data) {
