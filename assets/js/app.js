@@ -108,7 +108,7 @@ function renderYText(circlesGroup, newYScale, chosenYaxis) {
 
   circlesGroup.transition()
     .duration(1000)
-    .attr("dy", d => newXScale(d[chosenYAxis]));
+    .attr("dy", d => newYScale(d[chosenYAxis])+5);
 
   return circlesGroup;
 }
@@ -222,11 +222,11 @@ return circlesGroup;
     .text("Lacks Healthcare (%)")
     .classed("active", true);
 
-  const smokersLabel = ylabelsGroup.append("text")
+  const smokesLabel = ylabelsGroup.append("text")
     .attr("transform", "rotate(-90)")
     .attr("x", 0 - (height / 2))
     .attr("y", -60)
-    .attr("value", "smokers") // value to grab for event listener
+    .attr("value", "smokes") // value to grab for event listener
     .text("Smokes (%)")
     .classed("inactive", true);
 
@@ -269,6 +269,51 @@ return circlesGroup;
           .classed("active", false)
           .classed("inactive", true);
         povertyLabel
+          .classed("active", true)
+          .classed("inactive", false);
+      }
+    }
+  });
+
+  // y axis labels event listener
+  ylabelsGroup.selectAll("text")
+    .on("click", function() {
+    // get value of selection
+    const value = d3.select(this).attr("value");
+    if (value !== chosenYAxis) {
+
+      // replaces chosenXAxis with value
+      chosenYAxis = value;
+
+      // updates y scale for new data
+      yLinearScale = yScale(stateData, chosenYAxis);
+
+      // updates x axis with transition
+      yAxis = renderYAxes(yLinearScale, yAxis);
+
+      // updates circles with new x values
+      circlesXY = renderYCircles(circlesXY, yLinearScale, chosenYAxis);
+
+      // updates circles text with new x values
+      circlesText = renderYText(circlesText, yLinearScale, chosenYAxis);
+
+      // updates tooltips with new info
+      // circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+
+      // changes classes to change bold text
+      if (chosenYAxis === "smokes") {
+        smokesLabel
+          .classed("active", true)
+          .classed("inactive", false);
+        healthcareLabel
+          .classed("active", false)
+          .classed("inactive", true);
+      }
+      else {
+        smokesLabel
+          .classed("active", false)
+          .classed("inactive", true);
+          healthcareLabel
           .classed("active", true)
           .classed("inactive", false);
       }
