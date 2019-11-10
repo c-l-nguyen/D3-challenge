@@ -113,33 +113,66 @@ function renderYText(circlesGroup, newYScale, chosenYaxis) {
   return circlesGroup;
 }
 
+let formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
 // function used for updating circles group with new tooltip
-function updateToolTip(chosenXAxis, circlesGroup) {
-  let label  = "";
+function updateToolTip(circlesGroup, chosenXAxis, chosenYAxis) {
+
+  let xpercentsign = "";
+  let xlabel = "";
   if (chosenXAxis === "poverty") {
-    label = "Poverty:";
+    xlabel = "Poverty";
+    xpercentsign = "%";
   } else if (chosenXAxis === "age"){
-    label = "Age:";
+    xlabel = "Age";
   } else {
-    label = "Income:";
+    xlabel = "Income";
+  }
+
+  let ypercentsign = "";
+  let ylabel = "";
+  if (chosenYAxis === "healthcare") {
+    ylabel = "Healthcare";
+    ypercentsign = "%";
+  } else if (chosenYAxis === "smokes"){
+    ylabel = "Smokes";
+    ypercentsign = "%";
+  } else {
+    ylabel = "Obesity";
+    ypercentsign = "%";
   }
 
   const toolTip = d3.tip()
-      .attr("class", "tooltip")
-      .offset([80, -60])
-      .html(function(d) {
-          return (`${d.state}<br>${label} ${d[chosenXAxis]}`);
-      });
+    .attr("class", "d3-tip")
+    .offset([50, -75])
+    .html(function(d) {
+      if (chosenXAxis === "income"){
+        let incomelevel = formatter.format(d[chosenXAxis]);
+
+        return (`${d.state}<br>${xlabel}: ${incomelevel.substring(0, incomelevel.length-3)}${xpercentsign}<br>${ylabel}: ${d[chosenYAxis]}${ypercentsign}`)
+      } else {
+        return (`${d.state}<br>${xlabel}: ${d[chosenXAxis]}${xpercentsign}<br>${ylabel}: ${d[chosenYAxis]}${ypercentsign}`)
+      };
+    });
 
   circlesGroup.call(toolTip);
 
   circlesGroup.on("mouseover", function(data) {
       toolTip.show(data, this);
+      // circlesGroup.append("circle")
+      //   .attr("cx", d3.event.pageX)
+      //   .attr("cy", d3.event.pageY)
+      //   .attr("r", 15)
+      //   .attr("stroke", "black")
+      //   .attr("fill", "none");
   })
-  // onmouseout event
-  .on("mouseout", function(data, index) {
-      toolTip.hide(data, this);
-  });
+    // onmouseout event
+    .on("mouseout", function(data) {
+        toolTip.hide(data, this);
+    });
 
 return circlesGroup;
 }
@@ -193,7 +226,7 @@ return circlesGroup;
     .attr("dy", d => yLinearScale(d[chosenYAxis])+5)
     .classed("stateText", true);
 
-  // Create group for 2 x-axis labels
+  // Create group for 3 x-axis labels
   const xlabelsGroup = chartGroup.append("g")
         .attr("transform", `translate(${width / 2}, ${height})`);
 
@@ -218,7 +251,7 @@ return circlesGroup;
     .text("Household Income (Median)")
     .classed("inactive", true);
 
-  // Create group for 2 y-axis labels
+  // Create group for 3 y-axis labels
   const ylabelsGroup = chartGroup.append("g");
 
   const healthcareLabel = ylabelsGroup.append("text")
@@ -245,6 +278,9 @@ return circlesGroup;
     .text("Obese (%)")
     .classed("inactive", true);
 
+  // initial tooltips
+  circlesGroup = updateToolTip(circlesGroup, chosenXAxis, chosenYAxis);
+
   // x axis labels event listener
   xlabelsGroup.selectAll("text")
     .on("click", function() {
@@ -268,7 +304,7 @@ return circlesGroup;
       circlesText = renderXText(circlesText, xLinearScale, chosenXAxis);
 
       // updates tooltips with new info
-      // circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+      circlesGroup = updateToolTip(circlesGroup, chosenXAxis, chosenYAxis);
 
       // changes classes to change bold text
       if (chosenXAxis === "age") {
@@ -330,7 +366,7 @@ return circlesGroup;
       circlesText = renderYText(circlesText, yLinearScale, chosenYAxis);
 
       // updates tooltips with new info
-      // circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+      circlesGroup = updateToolTip(circlesGroup, chosenXAxis, chosenYAxis);
 
       // changes classes to change bold text
       if (chosenYAxis === "smokes") {
