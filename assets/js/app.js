@@ -206,13 +206,13 @@ let chosenYAxis = "healthcare";
       // updates y scale for new data
       yLinearScale = yScale(stateData, chosenYAxis);
 
-      // updates x axis with transition
+      // updates y axis with transition
       yAxis = renderYAxes(yLinearScale, yAxis);
 
-      // updates circles with new x values
+      // updates circles with new y values
       circlesXY = renderYCircles(circlesXY, yLinearScale, chosenYAxis);
 
-      // updates circles text with new x values
+      // updates circles text with new y values
       circlesText = renderYText(circlesText, yLinearScale, chosenYAxis);
 
       // updates tooltips with new info
