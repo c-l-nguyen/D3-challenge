@@ -200,7 +200,7 @@ let chosenYAxis = "healthcare";
     const value = d3.select(this).attr("value");
     if (value !== chosenYAxis) {
 
-      // replaces chosenXAxis with value
+      // replaces chosenYAxis with value
       chosenYAxis = value;
 
       // updates y scale for new data
