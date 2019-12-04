@@ -132,8 +132,10 @@ function updateToolTip(circlesGroup, chosenXAxis, chosenYAxis) {
 
   circlesGroup.call(toolTip);
 
+  // mouseover event
   circlesGroup.on("mouseover", function(data) {
       toolTip.show(data, this);
+      // trying to highlight chosen circle
       // circlesGroup.append("circle")
       //   .attr("cx", d3.event.pageX)
       //   .attr("cy", d3.event.pageY)
